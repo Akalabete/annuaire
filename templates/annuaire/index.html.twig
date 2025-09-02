@@ -1,20 +1,123 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AnnuaireController!{% endblock %}
+{% block title %}Annuaire - Locallo !{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/akalabete/Desktop/space/annuaire/src/Controller/AnnuaireController.php</code></li>
-        <li>Your template at <code>/home/akalabete/Desktop/space/annuaire/templates/annuaire/index.html.twig</code></li>
-    </ul>
+<div class="container mt-4">
+    {% if display_mode == 'visitor' %}
+        {# Version pour les visiteurs de passage #}
+        <div class="alert alert-info">
+            <h4>Bienvenue sur Locallo !</h4>
+            <p>Vous consultez notre annuaire en tant que visiteur. Pour une expérience personnalisée avec des résultats près de chez vous, <a href="/login">connectez-vous</a> ou <a href="/register">créez un compte</a>.</p>
+        </div>
+        
+        <h2>Catégories disponibles</h2>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Restaurants</h5>
+                        <p class="card-text">Découvrez les meilleurs restaurants de votre région</p>
+                        <a href="/annuaire/restaurants" class="btn btn-primary">Voir les restaurants</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Services</h5>
+                        <p class="card-text">Trouvez les services dont vous avez besoin</p>
+                        <a href="/annuaire/services" class="btn btn-primary">Voir les services</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Commerce</h5>
+                        <p class="card-text">Explorez les commerces locaux</p>
+                        <a href="/annuaire/commerce" class="btn btn-primary">Voir les commerces</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    {% elseif display_mode == 'authenticated_no_geolocation' %}
+        {# Version pour utilisateurs connectés sans géolocalisation #}
+        <div class="alert alert-warning">
+            <h4>Personnalisez votre expérience !</h4>
+            <p>Vous êtes connecté(e) ! Pour voir les services les plus proches de chez vous, <a href="/profile/location">renseignez votre localisation</a>.</p>
+        </div>
+        
+        <h2>Catégories disponibles</h2>
+        {# Même contenu que les visiteurs mais avec des options supplémentaires #}
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Restaurants</h5>
+                        <p class="card-text">Découvrez les meilleurs restaurants</p>
+                        <a href="/annuaire/restaurants" class="btn btn-primary">Voir les restaurants</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Services</h5>
+                        <p class="card-text">Trouvez les services dont vous avez besoin</p>
+                        <a href="/annuaire/services" class="btn btn-primary">Voir les services</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Commerce</h5>
+                        <p class="card-text">Explorez les commerces locaux</p>
+                        <a href="/annuaire/commerce" class="btn btn-primary">Voir les commerces</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    {% elseif display_mode == 'authenticated_geolocated' %}
+        {# Version pour utilisateurs connectés avec géolocalisation #}
+        <div class="alert alert-success">
+            <h4>Bienvenue {{ app.user.email }} !</h4>
+            <p>Nous affichons les services les plus proches de votre localisation : <strong>{{ user_location }}</strong></p>
+        </div>
+        
+        <h2>Services près de chez vous</h2>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Restaurants à proximité</h5>
+                        <p class="card-text">Les meilleurs restaurants dans un rayon de 5km</p>
+                        <a href="/annuaire/restaurants" class="btn btn-primary">Voir les restaurants</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Services locaux</h5>
+                        <p class="card-text">Services disponibles dans votre zone</p>
+                        <a href="/annuaire/services" class="btn btn-primary">Voir les services</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Commerces de proximité</h5>
+                        <p class="card-text">Commerces à moins de 3km</p>
+                        <a href="/annuaire/commerce" class="btn btn-primary">Voir les commerces</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
