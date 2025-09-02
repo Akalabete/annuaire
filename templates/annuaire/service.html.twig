@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ service.name ?? 'Service' }} - {{ subcategory|title }} - Annuaire Locallo{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    {# Fil d'Ariane #}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('annuaire.index') }}">Annuaire</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('annuaire.category', {category: category}) }}">{{ category|title }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('annuaire.subcategory', {category: category, subcategory: subcategory}) }}">{{ subcategory|title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ service.name ?? 'Service #' ~ service_id }}</li>
+        </ol>
+    </nav>
+
+    {# Messages contextuels selon le type d'utilisateur #}
+    {% if display_mode == 'visitor' %}
+        <div class="alert alert-info">
+            <p>Vous consultez cette fiche en tant que visiteur. <a href="/login">Connectez-vous</a> pour voir les informations de contact et la localisation précise.</p>
+        </div>
+    {% elseif display_mode == 'authenticated_no_geolocation' %}
+        <div class="alert alert-warning">
+            <p>Pour voir la distance exacte et les informations de localisation, <a href="/profile/location">renseignez votre localisation</a>.</p>
+        </div>
+    {% elseif display_mode == 'authenticated_geolocated' %}
+        <div class="alert alert-success">
+            <p>Informations personnalisées selon votre localisation : {{ user_location }}</p>
+        </div>
+    {% endif %}
+
+    {% if service is null %}
+        <div class="alert alert-danger">
+            <h4>Service non trouvé</h4>
+            <p>Le service demandé n'existe pas ou n'est plus disponible.</p>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{{ service.name }}</h1>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Description</h5>
+                        <p class="card-text">{{ service.description }}</p>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Informations pratiques</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Adresse :</strong> {{ service.address }}</p>
+                                <p><strong>Téléphone :</strong> 
+                                    {% if display_mode == 'visitor' %}
+                                        <span class="text-muted">Connectez-vous pour voir</span>
+                                    {% else %}
+                                        {{ service.phone }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Email :</strong> 
+                                    {% if display_mode == 'visitor' %}
+                                        <span class="text-muted">Connectez-vous pour voir</span>
+                                    {% else %}
+                                        {{ service.email }}
+                                    {% endif %}
+                                </p>
+                                <p><strong>Site web :</strong> 
+                                    {% if display_mode == 'visitor' %}
+                                        <span class="text-muted">Connectez-vous pour voir</span>
+                                    {% else %}
+                                        <a href="{{ service.website }}" target="_blank">{{ service.website }}</a>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if display_mode == 'authenticated_geolocated' %}
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Informations de proximité</h5>
+                            <p><strong>Distance :</strong> {{ service.distance }} km</p>
+                            <p><strong>Temps de trajet estimé :</strong> {{ service.travelTime }} minutes</p>
+                            <a href="https://maps.google.com/?q={{ service.latitude }},{{ service.longitude }}" 
+                               target="_blank" class="btn btn-outline-primary">
+                                <i class="fas fa-map-marker-alt"></i> Voir sur la carte
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Horaires</h5>
+                        {% if service.schedule %}
+                            <p>{{ service.schedule }}</p>
+                        {% else %}
+                            <p class="text-muted">Horaires non renseignés</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Note</h5>
+                        {% if service.rating %}
+                            <div class="d-flex align-items-center">
+                                <span class="me-2">{{ service.rating }}/5</span>
+                                <div class="stars">
+                                    {% for i in 1..5 %}
+                                        <i class="fas fa-star{% if i > service.rating %}-o{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <small class="text-muted">({{ service.reviewCount }} avis)</small>
+                        {% else %}
+                            <p class="text-muted">Aucune note disponible</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if display_mode != 'visitor' %}
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Actions</h5>
+                            <a href="tel:{{ service.phone }}" class="btn btn-success btn-sm mb-2">
+                                <i class="fas fa-phone"></i> Appeler
+                            </a>
+                            <a href="mailto:{{ service.email }}" class="btn btn-info btn-sm mb-2">
+                                <i class="fas fa-envelope"></i> Email
+                            </a>
+                            <a href="{{ service.website }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-external-link-alt"></i> Site web
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {# Boutons de navigation #}
+    <div class="mt-4">
+        <a href="{{ path('annuaire.subcategory', {category: category, subcategory: subcategory}) }}" class="btn btn-secondary">
+            ← Retour aux services
+        </a>
+        <a href="{{ path('annuaire.category', {category: category}) }}" class="btn btn-outline-secondary">
+            Retour aux sous-catégories
+        </a>
+        <a href="{{ path('annuaire.index') }}" class="btn btn-outline-secondary">
+            Retour à l'annuaire
+        </a>
+    </div>
+</div>
+{% endblock %}

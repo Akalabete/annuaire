@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ subcategory|title }} - {{ category|title }} - Annuaire Locallo{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    {# Fil d'Ariane #}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('annuaire.index') }}">Annuaire</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('annuaire.category', {category: category}) }}">{{ category|title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ subcategory|title }}</li>
+        </ol>
+    </nav>
+
+    {# Messages contextuels selon le type d'utilisateur #}
+    {% if display_mode == 'visitor' %}
+        <div class="alert alert-info">
+            <h4>{{ subcategory|title }} - {{ category|title }}</h4>
+            <p>Vous consultez cette sous-catégorie en tant que visiteur. <a href="/login">Connectez-vous</a> pour voir les services les plus proches de chez vous.</p>
+        </div>
+    {% elseif display_mode == 'authenticated_no_geolocation' %}
+        <div class="alert alert-warning">
+            <h4>{{ subcategory|title }} - {{ category|title }}</h4>
+            <p>Pour voir les services les plus proches de chez vous, <a href="/profile/location">renseignez votre localisation</a>.</p>
+        </div>
+    {% elseif display_mode == 'authenticated_geolocated' %}
+        <div class="alert alert-success">
+            <h4>{{ subcategory|title }} près de chez vous</h4>
+            <p>Services "{{ subcategory|title }}" dans la catégorie "{{ category|title }}" à proximité de {{ user_location }}</p>
+        </div>
+    {% endif %}
+
+    <h2>Services : {{ subcategory|title }}</h2>
+    
+    {% if services is empty %}
+        <div class="alert alert-warning">
+            <p>Aucun service trouvé dans la sous-catégorie "{{ subcategory|title }}".</p>
+        </div>
+    {% else %}
+        <div class="row">
+            {% for service in services %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ service.name }}</h5>
+                            <p class="card-text">{{ service.description|slice(0, 150) }}{% if service.description|length > 150 %}...{% endif %}</p>
+                            
+                            <div class="row">
+                                <div class="col-6">
+                                    {% if display_mode == 'authenticated_geolocated' %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt"></i> 
+                                            {{ service.distance }} km
+                                        </small>
+                                    {% endif %}
+                                </div>
+                                <div class="col-6 text-end">
+                                    {% if service.rating %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-star"></i> 
+                                            {{ service.rating }}/5
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <br>
+                            <a href="{{ path('annuaire.service', {category: category, subcategory: subcategory, id: service.id}) }}" 
+                               class="btn btn-primary">
+                                Voir la fiche
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {# Boutons de navigation #}
+    <div class="mt-4">
+        <a href="{{ path('annuaire.category', {category: category}) }}" class="btn btn-secondary">
+            ← Retour aux sous-catégories
+        </a>
+        <a href="{{ path('annuaire.index') }}" class="btn btn-outline-secondary">
+            Retour à l'annuaire
+        </a>
+    </div>
+</div>
+{% endblock %}
