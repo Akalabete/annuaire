@@ -15,10 +15,18 @@
     <body>
         <nav class="navbar bg-body-tertiary">
             <div class="container-fluid">
-              <a class="navbar-brand" href="/">Accueil</a>
-              <a class="navbar-brand" href="/login">Connection</a>
-              <a class="navbar-brand" href="/about">A propos</a>
-              <a class="navbar-brand" href="/contact">Contact</a>
+                <a class="navbar-brand" href="/">Accueil</a>
+                {% if app.user %}
+                    {# Utilisateur connecté #}
+                    <a class="navbar-brand" href="/profile">Mon profil</a>
+                    <a class="navbar-brand" href="/logout">Déconnexion</a>
+                {% else %}
+                    {# Utilisateur non connecté #}
+                    <a class="navbar-brand" href="/login">Connexion</a>
+                    <a class="navbar-brand" href="/register">Inscription</a>
+                {% endif %}
+                <a class="navbar-brand" href="/about">A propos</a>
+                <a class="navbar-brand" href="/contact">Contact</a>
             </div>
         </nav>
         <div class="container my-4">
