@@ -1,23 +1,150 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Locallo, c'est parti !{% endblock %}
 
 {% block body %}
     {% for flash_error in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 
-    <h1>Register</h1>
+    <div class="container mt-4">
+        <h1>Inscription</h1>
 
-    {{ form_errors(registrationForm) }}
+        {{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+        {{ form_start(registrationForm) }}
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Informations personnelles</h3>
+                    {{ form_row(registrationForm.username, {
+                        label: 'Nom d\'utilisateur'
+                    }) }}
+                    {{ form_row(registrationForm.email, {
+                        label: 'Email'
+                    }) }}
+                    {{ form_row(registrationForm.plainPassword, {
+                        label: 'Mot de passe'
+                    }) }}
+                    {{ form_row(registrationForm.agreeTerms) }}
+                </div>
+                
+                <div class="col-md-6">
+                    <h3>Votre activité</h3>
+                    {{ form_row(registrationForm.isSuperUser) }}
+                    
+                    <div id="activity-fields" style="display: none;">
+                        <h4>Informations sur votre activité</h4>
+                        {{ form_row(registrationForm.activityName) }}
+                        {{ form_row(registrationForm.activityDescription) }}
+                        {{ form_row(registrationForm.activityCategory) }}
+                        
+                        {{ form_row(registrationForm.hasOnlineShop) }}
+                        
+                        <div id="shop-fields" style="display: none;">
+                            <h5>Boutique en ligne</h5>
+                            <p class="text-muted">Vous pourrez ajouter vos produits plus tard dans votre dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Créer mon compte</button>
+            </div>
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Gestion du formulaire d'inscription avec champs conditionnels
+        function toggleUserTypeFields() {
+            console.log('toggleUserTypeFields appelée');
+            
+            // Chercher les éléments
+            const superUserCheckbox = document.querySelector('input[name="registration_form[isSuperUser]"]');
+            const shopCheckbox = document.querySelector('input[name="registration_form[hasOnlineShop]"]');
+            const activityContainer = document.getElementById('activity-fields');
+            const shopContainer = document.getElementById('shop-fields');
+            
+            console.log('SuperUser checkbox:', superUserCheckbox);
+            console.log('Shop checkbox:', shopCheckbox);
+            console.log('Activity container:', activityContainer);
+            console.log('Shop container:', shopContainer);
+            
+            if (superUserCheckbox && activityContainer) {
+                if (superUserCheckbox.checked) {
+                    console.log('SuperUser activé - affichage des champs d\'activité');
+                    activityContainer.style.display = 'block';
+                    
+                    // Rendre les champs d'activité requis
+                    const activityFields = activityContainer.querySelectorAll('input, select, textarea');
+                    activityFields.forEach(field => {
+                        field.required = true;
+                    });
+                    
+                    // Gérer la boutique en ligne
+                    if (shopCheckbox && shopContainer) {
+                        if (shopCheckbox.checked) {
+                            console.log('Boutique en ligne activée');
+                            shopContainer.style.display = 'block';
+                        } else {
+                            console.log('Boutique en ligne désactivée');
+                            shopContainer.style.display = 'none';
+                        }
+                    }
+                } else {
+                    console.log('SuperUser désactivé - masquage des champs');
+                    activityContainer.style.display = 'none';
+                    if (shopContainer) shopContainer.style.display = 'none';
+                    
+                    // Enlever l'obligation et vider les champs
+                    const allFields = document.querySelectorAll('.activity-field, .shop-field');
+                    allFields.forEach(field => {
+                        field.required = false;
+                        field.value = '';
+                    });
+                }
+            }
+        }
+        
+        function toggleShopFields() {
+            const shopCheckbox = document.querySelector('input[name="registration_form[hasOnlineShop]"]');
+            const shopContainer = document.getElementById('shop-fields');
+            
+            if (shopCheckbox && shopContainer) {
+                if (shopCheckbox.checked) {
+                    shopContainer.style.display = 'block';
+                } else {
+                    shopContainer.style.display = 'none';
+                    // Vider les champs de boutique
+                    const shopFields = shopContainer.querySelectorAll('input, select, textarea');
+                    shopFields.forEach(field => {
+                        field.value = '';
+                    });
+                }
+            }
+        }
+
+        // Initialiser au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM chargé');
+            toggleUserTypeFields();
+            
+            // Ajouter les événements
+            const superUserCheckbox = document.querySelector('input[name="registration_form[isSuperUser]"]');
+            const shopCheckbox = document.querySelector('input[name="registration_form[hasOnlineShop]"]');
+            
+            if (superUserCheckbox) {
+                superUserCheckbox.addEventListener('change', toggleUserTypeFields);
+                console.log('Événement ajouté au SuperUser checkbox');
+            }
+            
+            if (shopCheckbox) {
+                shopCheckbox.addEventListener('change', toggleShopFields);
+                console.log('Événement ajouté au Shop checkbox');
+            }
+        });
+    </script>
 {% endblock %}
