@@ -76,7 +76,7 @@ class RegistrationFormType extends AbstractType
             // Champs conditionnels pour la boutique en ligne
             ->add('activityName', TextType::class, [
                 'mapped' => false,
-                'label' => 'Nom de votre boutique',
+                'label' => 'Nom de votre activité',
                 'required' => false,
                 'attr' => [
                     'class' => 'form-control shop-field', 
@@ -107,6 +107,12 @@ class RegistrationFormType extends AbstractType
                     'class' => 'form-select shop-field',  
                 ],
             ])
+            ->add('superUserAgreeTerms', CheckboxType::class, [
+                'mapped' => false,
+                'label' => 'Vous acceptez nos conditions d\'utilisation en tant qu\'exposant?',
+                'required' => false,
+            ])
+            
             ->add('hasOnlineShop', CheckboxType::class, [
                 'mapped' => false,
                 'label' => 'Vous voulez nous confier des articles à vendre ?',
@@ -116,6 +122,11 @@ class RegistrationFormType extends AbstractType
                     'id' => 'hasOnlineShop',
                     'onchange' => 'toggleShopFields()',
                 ],
+            ])
+            ->add('shopAgreeTerms', CheckboxType::class, [
+                'mapped' => false,
+                'label' => 'Vous acceptez nos conditions d\'utilisation de notre système de boutique en ligne?',
+                'required' => false,
             ])
         ;
     }

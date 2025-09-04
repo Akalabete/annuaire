@@ -8,52 +8,91 @@
     {% endfor %}
 
     <div class="container mt-4">
-        <h1>Inscription</h1>
+        <h1 class="text-center">Inscription</h1>
 
         {{ form_errors(registrationForm) }}
 
         {{ form_start(registrationForm) }}
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Informations personnelles</h3>
-                    {{ form_row(registrationForm.username, {
-                        label: 'Nom d\'utilisateur'
-                    }) }}
-                    {{ form_row(registrationForm.email, {
-                        label: 'Email'
-                    }) }}
-                    {{ form_row(registrationForm.plainPassword, {
-                        label: 'Mot de passe'
-                    }) }}
-                    {{ form_row(registrationForm.agreeTerms) }}
+            <div class="col-md-8 mx-auto my-4">
+                <div class="mt-4 mb-4 mx-auto" style="width: 50%; max-width: 500px;">
+                    <h3 class="text-center">Informations personnelles</h3>
+                    <div class="row-cols-2 form-field-spaced">
+                        {{ form_label(registrationForm.username, 'Nom d\'utilisateur :') }}
+                        {{ form_widget(registrationForm.username)}}
+                        {{ form_errors(registrationForm.username) }}
+                    </div>
+                    <div class="row-cols-2 form-field-spaced">
+                        {{ form_label(registrationForm.email, 'Email :') }}
+                        {{ form_widget(registrationForm.email)}}
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+                    <div class="row-cols-2 form-field-spaced">
+                        {{ form_label(registrationForm.plainPassword, 'Mot de passe :') }}
+                        {{ form_widget(registrationForm.plainPassword)}}
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+                    <div class="row-cols-2 form-field-spaced">
+                        {{ form_label(registrationForm.agreeTerms, 'Conditions d\'utilisation :') }}
+                        {{ form_widget(registrationForm.agreeTerms)}}
+                        {{ form_errors(registrationForm.agreeTerms) }}
+                    </div>
                 </div>
-                
-                <div class="col-md-6">
-                    <h3>Votre activité</h3>
-                    {{ form_row(registrationForm.isSuperUser) }}
-                    
+                <div class="mt-4 mb-4 mx-auto" style="width: 50%; max-width: 500px;">
+                    <h3 class="text-center">Votre activité</h3>
+                    <div class="col form-field-spaced">
+                        {{ form_label(registrationForm.isSuperUser, 'Vous souhaitez apparaître dans notre annuaire ? :') }}
+                        {{ form_widget(registrationForm.isSuperUser)}}
+                        {{ form_errors(registrationForm.isSuperUser) }}
+                    </div>
                     <div id="activity-fields" style="display: none;">
-                        <h4>Informations sur votre activité</h4>
-                        {{ form_row(registrationForm.activityName) }}
-                        {{ form_row(registrationForm.activityDescription) }}
-                        {{ form_row(registrationForm.activityCategory) }}
-                        
-                        {{ form_row(registrationForm.hasOnlineShop) }}
-                        
-                        <div id="shop-fields" style="display: none;">
-                            <h5>Boutique en ligne</h5>
+                        <h4 class="text-center">Informations sur votre activité</h4>
+                        <div class="row">
+                            {{ form_label(registrationForm.activityName, 'Nom de votre activité :') }}
+                            {{ form_widget(registrationForm.activityName)}}
+                            {{ form_errors(registrationForm.activityName) }}
+                        </div>
+                        <div class="row">
+                            {{ form_label(registrationForm.activityDescription, 'Description de votre activité :') }}
+                            {{ form_widget(registrationForm.activityDescription)}}
+                            {{ form_errors(registrationForm.activityDescription) }}
+                        </div>
+                        <div class="row">
+                            {{ form_label(registrationForm.activityCategory, 'Catégorie de votre activité :') }}
+                            {{ form_widget(registrationForm.activityCategory)}}
+                            {{ form_errors(registrationForm.activityCategory) }}
+                        </div>
+                        <div class="row-cols-2 mt-2 mb-2 form-field-spaced">
+                            {{ form_label(registrationForm.superUserAgreeTerms, 'conditions d\'utilisation :') }}
+                            {{ form_widget(registrationForm.superUserAgreeTerms)}}
+                            {{ form_errors(registrationForm.superUserAgreeTerms) }}
+                        </div>
+                        <div class="row-cols-2 form-field-spaced">
+                            {{ form_label(registrationForm.hasOnlineShop, 'créer votre boutique en ligne ? :') }}
+                            {{ form_widget(registrationForm.hasOnlineShop)}}
+                            {{ form_errors(registrationForm.hasOnlineShop) }}
+                        </div>        
+                    </div>
+                    <div class="mt-4 mb-4" id="shop-fields" style="display: none;">
+                        <h5 class="text-center" style="margin-bottom: 20px;">Boutique en ligne</h5>
+                        <div class="row-cols-2 form-field-spaced">
+                            {{ form_label(registrationForm.shopAgreeTerms, 'conditions d\'utilisation :') }}
+                            {{ form_widget(registrationForm.shopAgreeTerms)}}
+                            {{ form_errors(registrationForm.shopAgreeTerms) }}
+                        </div>
+                        <div class="row">
                             <p class="text-muted">Vous pourrez ajouter vos produits plus tard dans votre dashboard.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4 text-center">
                 <button type="submit" class="btn btn-primary btn-lg">Créer mon compte</button>
             </div>
         {{ form_end(registrationForm) }}
     </div>
 {% endblock %}
+
 
 {% block javascripts %}
     {{ parent() }}
